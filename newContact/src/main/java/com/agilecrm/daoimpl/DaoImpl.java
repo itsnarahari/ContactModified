@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.agilecrm.dao.Dao;
@@ -19,10 +20,18 @@ public class DaoImpl implements Dao {
 	static int status;
 	Contact contact = new Contact();
 
+	java.util.Date dt = new java.util.Date();
+
+	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+	String updatedDate = sdf.format(dt);
+	String updatedBy = "Narahari";
+
 	public int saveContact(Contact contact) throws SQLException, ClassNotFoundException {
+
 		con = MySqlConnection.getConnection();
 		try {
-			String sql = "insert into contact(firstName,lastName,email,createdBy,createdDate,address,dob,isActive,updatedBy,updatedDate,phoneNumber) values(?,?,?,?,?,?,?,?,?,?,?)";
+			String sql = "insert into contact(firstName,lastName,email,createdBy,createdDate,address,dob,isActive,phoneNumber) values(?,?,?,?,?,?,?,?,?)";
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, contact.getFirstName());
 			ps.setString(2, contact.getLastName());
@@ -32,9 +41,9 @@ public class DaoImpl implements Dao {
 			ps.setString(6, contact.getAddress());
 			ps.setDate(7, new java.sql.Date(contact.getDob().getTime()));
 			ps.setString(8, contact.getIsActive());
-			ps.setString(9, contact.getUpdatedBy());
-			ps.setDate(10, new java.sql.Date(contact.getDob().getTime()));
-			ps.setString(11, contact.getPhoneNumber());
+			// ps.setString(9, contact.getUpdatedBy());
+			// ps.setDate(10, new java.sql.Date(contact.getUpdatedDate().getTime()));
+			ps.setString(9, contact.getPhoneNumber());
 			status = ps.executeUpdate();
 		} catch (Exception e) {
 
@@ -44,28 +53,28 @@ public class DaoImpl implements Dao {
 
 	}
 
-	public Contact updateContact(Contact contact) {
+	public int updateContact(Contact contact) {
 
-		String sql = "update contact set firstName=?,lastName=?,email=?,createdBy=?, createdDate=?,address=?,dob=?,isActive=?,updatedBy=?,updatedDate=?,phoneNumber=? where contactId=?";
+		String sql = "update contact set firstName=?,lastName=?,email=?,address=?,dob=?,updatedBy=?,updatedDate=?,phoneNumber=? where contactId=?";
 
 		try {
+			con = MySqlConnection.getConnection();
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, contact.getFirstName());
 			ps.setString(2, contact.getLastName());
 			ps.setString(3, contact.getEmail());
-			ps.setString(4, contact.getCreatedBy());
-			ps.setDate(5, new java.sql.Date(contact.getCreatedDate().getTime()));
-			ps.setString(6, contact.getAddress());
-			ps.setDate(7, (Date) contact.getDob());
-			ps.setString(8, contact.getIsActive());
-			ps.setString(9, contact.getUpdatedBy());
-			ps.setDate(10, new java.sql.Date(contact.getDob().getTime()));
-			ps.setString(11, contact.getPhoneNumber());
-			ps.executeUpdate(sql);
+			// ps.setString(4, contact.getCreatedBy());
+			// ps.setDate(5, new java.sql.Date(contact.getCreatedDate().getTime()));
+			ps.setString(4, contact.getAddress());
+			ps.setDate(5, new java.sql.Date(contact.getDob().getTime()));
+			ps.setString(6, contact.getUpdatedBy());
+			ps.setDate(7, new java.sql.Date(contact.getDob().getTime()));
+			ps.setString(8, contact.getPhoneNumber());
+			status = ps.executeUpdate(sql);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return contact;
+		return status;
 	}
 
 	public List<Contact> listContacts() throws SQLException {
@@ -92,11 +101,15 @@ public class DaoImpl implements Dao {
 		return (List<Contact>) contact;
 	}
 
-	public Contact getContactById(int id) throws SQLException {
-
-		String sql = "select *from contact where contactId=" + id + "";
-		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery(sql);
+	public List<Contact> getContactById(Contact contact) throws SQLException, ClassNotFoundException {
+		
+		List<Contact> list=new ArrayList<>();
+		
+		con=MySqlConnection.getConnection();
+		
+		PreparedStatement ps = con.prepareStatement("select * from contact WHERE contactId=?");
+		ps.setInt(1, contact.getContactId());                                                                                                                 
+		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			contact.setContactId(rs.getInt("contactId"));
 			contact.setFirstName(rs.getString("firstName"));
@@ -112,21 +125,22 @@ public class DaoImpl implements Dao {
 			contact.setPhoneNumber(rs.getString("phoneNumber"));
 
 		}
-		return contact;
+		return list;
 	}
 
-	public void deleteContact(int id) {
-
-		String sql = "delete from contact where id=" + id + "";
-
+	public boolean deleteContact(Contact contact) {
+		int status = 0;
 		try {
-			Statement stmt = con.createStatement();
-			stmt.executeUpdate(sql);
+			con = MySqlConnection.getConnection();
 
+			PreparedStatement ps = con.prepareStatement("DELETE FROM contact WHERE contactId=?");
+			ps.setInt(1, contact.getContactId());
+			status = ps.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
 
 		}
+		return status > 0;
 
 	}
 

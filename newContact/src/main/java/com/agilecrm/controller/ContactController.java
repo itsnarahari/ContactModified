@@ -6,6 +6,7 @@ import java.net.URLPermission;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -24,38 +25,52 @@ public class ContactController extends HttpServlet {
 	/**
 	 * Author By Narahari
 	 */
-
-
+	ServiceImpl services = new ServiceImpl();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		PrintWriter out=resp.getWriter();
-		MySqlConnection connection = new MySqlConnection();
-		try {
-			out.print(connection.getConnection().getCatalog());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		doPost(req, resp);
 
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+		String action = req.getParameter("action");
+
+		if (action.equals("addContact")) {
+			addContact(req, resp);
+		}
+
+		if (action.equals("updateContact")) {
+			updateContact(req, resp);
+		}
+		if (action.equals("deleteContact")) {
+			deleteContactOp(req, resp);
+		}
+		if (action.equals("getContactByIdOp")) {
 		
+				try {
+					getContactByIdOp(req, resp);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+		}
+	}
+
+	protected void addContact(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
 		Services services = new ServiceImpl();
-				
-		Contact contact=new Contact();
-		
-		PrintWriter out=resp.getWriter();
+
+		Contact contact = new Contact();
+
+		PrintWriter out = resp.getWriter();
 		out.print("In Post");
-		
+
 		contact.setFirstName(req.getParameter("firstName"));
 		contact.setLastName(req.getParameter("lastName"));
 		contact.setEmail(req.getParameter("email"));
@@ -67,7 +82,7 @@ public class ContactController extends HttpServlet {
 			e.printStackTrace();
 		}
 		contact.setAddress(req.getParameter("address"));
-		
+
 		try {
 			contact.setDob(new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("dob")));
 		} catch (ParseException e) {
@@ -75,16 +90,16 @@ public class ContactController extends HttpServlet {
 			e.printStackTrace();
 		}
 		contact.setIsActive(req.getParameter("isActive"));
-		contact.setUpdatedBy(req.getParameter("updatedBy"));
-		try {
-			contact.setUpdatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("updatedDate")));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// contact.setUpdatedBy(req.getParameter("updatedBy"));
+		/*
+		 * try { contact.setUpdatedDate(new
+		 * SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("updatedDate"))); }
+		 * catch (ParseException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
 		contact.setPhoneNumber(req.getParameter("phoneNumber"));
-		
-		int status =0;
+
+		int status = 0;
 		try {
 			status = services.saveContact(contact);
 		} catch (SQLException e) {
@@ -93,11 +108,87 @@ public class ContactController extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(status>0)
-		out.print("Recorded");
+		if (status > 0)
+			out.print("Recorded");
 		else
 			out.print("not done");
+
+	}
+
+	protected void updateContact(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+
+		Contact contact = new Contact();
+
+		PrintWriter out = resp.getWriter();
+		out.print("In Post Update");
+		contact.setContactId(Integer.parseInt(req.getParameter("contactId")));
+		contact.setFirstName(req.getParameter("firstName"));
+		contact.setLastName(req.getParameter("lastName"));
+		contact.setEmail(req.getParameter("email"));
+		// contact.setCreatedBy(req.getParameter("createdBy"));
+		/*
+		 * try { contact.setCreatedDate(new
+		 * SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("createdDate"))); }
+		 * catch (ParseException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
+		contact.setAddress(req.getParameter("address"));
+
+		try {
+			contact.setDob(new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("dob")));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		contact.setUpdatedBy(req.getParameter("updatedBy"));
+
+		try {
+			contact.setUpdatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("updatedDate")));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		contact.setPhoneNumber(req.getParameter("phoneNumber"));
+		int status = 0;
+		status = services.updateContact(contact);
+		if (status > 0)
+			out.print("Record Updated");
+		else
+			out.print("not done");
+
+	}
+
+	protected void deleteContactOp(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		
+		Contact contact=new Contact();
+		int id1=Integer.parseInt(req.getParameter("id"));
+		contact.setContactId(id1);
+		PrintWriter out = resp.getWriter();
+		boolean status=services.deleteContact(contact);
+		if(status)
+		out.print("In Post Delete");
+		else
+			out.println("Arey halva Correct chey ra babu anni sarlu kodthav ra");
+	}
+	
+	protected void getContactByIdOp(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException, ClassNotFoundException, SQLException {
+		resp.setContentType("text/html");
+		Contact contact=new Contact();
+		int id1=Integer.parseInt(req.getParameter("id"));
+		contact.setContactId(id1);
+		PrintWriter out = resp.getWriter();
+		List<Contact> co=services.getContactById(contact);
+		for(Contact c:co)
+		{
+			out.print(c.getContactId());
 			
-}
+		}
+		
+				
+	}
 
 }

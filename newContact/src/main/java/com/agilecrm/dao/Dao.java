@@ -8,9 +8,9 @@ import com.agilecrm.model.Contact;
 public interface Dao {
 	
 	public int saveContact(Contact contact) throws SQLException, ClassNotFoundException;
-	public Contact updateContact(Contact contact);
+	public int updateContact(Contact contact);
 	public List<Contact> listContacts() throws SQLException;
-	public Contact getContactById(int id) throws SQLException;
-	public void deleteContact(int id);
+	public List<Contact> getContactById(Contact contact) throws SQLException, ClassNotFoundException;
+	public boolean deleteContact(Contact contact);
 
 }
