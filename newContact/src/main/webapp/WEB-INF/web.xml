@@ -10,18 +10,10 @@
   	<description></description>
   	<servlet-class>com.agilecrm.controller.ContactController</servlet-class>
   </servlet>
-  <servlet>
-  	<servlet-name>A</servlet-name>
-  	<display-name>A</display-name>
-  	<description></description>
-  	<servlet-class>com.agilecrm.controller.A</servlet-class>
-  </servlet>
+  
   <servlet-mapping>
   	<servlet-name>newContact</servlet-name>
   	<url-pattern>/contact</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-  	<servlet-name>A</servlet-name>
-  	<url-pattern>/A</url-pattern>
-  </servlet-mapping>
+  
 </web-app>

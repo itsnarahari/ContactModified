@@ -74,13 +74,7 @@ public class ContactController extends HttpServlet {
 		contact.setFirstName(req.getParameter("firstName"));
 		contact.setLastName(req.getParameter("lastName"));
 		contact.setEmail(req.getParameter("email"));
-		contact.setCreatedBy(req.getParameter("createdBy"));
-		try {
-			contact.setCreatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("createdDate")));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		contact.setAddress(req.getParameter("address"));
 
 		try {
@@ -138,14 +132,6 @@ public class ContactController extends HttpServlet {
 
 		try {
 			contact.setDob(new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("dob")));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		contact.setUpdatedBy(req.getParameter("updatedBy"));
-
-		try {
-			contact.setUpdatedDate(new SimpleDateFormat("yyyy-MM-dd").parse(req.getParameter("updatedDate")));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
