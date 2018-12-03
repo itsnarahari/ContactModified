@@ -50,7 +50,7 @@ public class DaoImpl implements Dao {
 
 	public int updateContact(Contact contact) {
 
-		String sql = "update contact set firstName=?,lastName=?,email=?,address=?,dob=?, isActive='Yes', updatedBy='"+by+"', updatedDate='"+updatedDate+"', phoneNumber=? where contactId=?";
+		String sql = "UPDATE contact set firstName= ?,lastName= ?, email= ?, address= ?,dob= ?, isActive='Yes', updatedBy='"+by+"', updatedDate='"+updatedDate+"', phoneNumber= ? WHERE contactId=?";
 
 		try {
 			con = MySqlConnection.getConnection();
